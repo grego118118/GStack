@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greg's Health & Vascular Hub</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc; /* Slate 50 */
+        }
+        .custom-card {
+            background-color: #1e293b; /* Slate 800 */
+            border: 1px solid #334155; /* Slate 700 */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .custom-card:hover {
+            transform: translateY(-4px);
+            border-color: #475569; /* Slate 600 */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
+        .tab-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-left-color: #3b82f6; /* Blue 500 */
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Custom scrollbar for visual consistency */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Top Header & Banner -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-tr from-blue-600 to-indigo-500 p-2.5 rounded-xl shadow-lg shadow-indigo-500/20">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">GREG'S PERFORMANCE HUB</h1>
+                    <p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Vascular Optimization & Daily Protocol</p>
+                </div>
+            </div>
+            <!-- Tab Navigation Control -->
+            <nav class="flex p-1 bg-slate-950 rounded-xl border border-slate-800/80 w-full sm:w-auto">
+                <button onclick="switchTab('stack')" id="tab-stack" class="tab-btn flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-semibold text-white bg-slate-800 shadow-md">
+                    📋 My Stack
+                </button>
+                <button onclick="switchTab('electrolytes')" id="tab-electrolytes" class="tab-btn flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-semibold text-slate-400 hover:text-slate-200">
+                    ⚡ Electrolytes
+                </button>
+                <button onclick="switchTab('science')" id="tab-science" class="tab-btn flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-semibold text-slate-400 hover:text-slate-200">
+                    🧬 NO Science
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-7xl w-full mx-auto px-4 py-8 flex-grow">
+        <!-- Interactive Disclaimer Banner -->
+        <section class="mb-8 p-5 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex gap-4 items-start">
+            <div class="bg-amber-500/20 p-2 rounded-lg text-amber-400 shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+            </div>
+            <div>
+                <h4 class="font-bold text-amber-300 text-sm mb-1">Medical Disclaimer</h4>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    The health protocols, product comparisons, and ingredient metrics shown here are designed for informational and educational mapping. These details are not medical advice. Consult with a qualified physician before introducing potent nitric oxide precursors (like L-Citrulline or Pycnogenol), especially if taking prescription cardiovascular, blood pressure, or erectile dysfunction therapies.
+                </p>
+            </div>
+        </section>
+
+        <!-- ================= TAB 1: GREG'S DAILY STACK ================= -->
+        <section id="content-stack" class="tab-content">
+            <!-- Phase 1: Morning Focus -->
+            <div class="mb-12">
+                <div class="border-l-4 border-emerald-500 pl-4 mb-6">
+                    <span class="text-xs font-extrabold text-emerald-400 uppercase tracking-widest">Phase 1</span>
+                    <h2 class="text-2xl font-extrabold tracking-tight">☀️ Morning Focus (Breakfast & Coffee Stack)</h2>
+                    <p class="text-sm text-slate-400 mt-1">Schedules fat-soluble compounds, establishes microcirculation, and leverages caffeinated focus with strategic offsets.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Multivitamin -->
+                    <div class="custom-card p-6 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider bg-emerald-500/10 px-2 py-1 rounded">Morning</span>
+                            <h3 class="text-xl font-bold text-slate-100 mt-3 mb-2">Rainbow Light Men's One</h3>
+                            <p class="text-xs text-slate-400 mb-2 font-medium">Common Dose: 1 Tablet with breakfast</p>
+                            <p class="text-sm text-slate-300 leading-relaxed">Provides structured multi-nutrient baseline support for male vitality, immune response, cellular energy production, and cognitive health.</p>
+                            <div id="expanded-multi" class="expanded-benefits hidden mt-4 p-3 bg-slate-900/60 rounded-xl text-slate-300 text-xs leading-relaxed border border-slate-700/40"></div>
+                        </div>
+                        <div class="mt-6 flex gap-3">
+                            <a href="https://amzn.to/46DULiH" target="_blank" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-center flex-1 text-sm py-2.5 rounded-xl transition">Amazon</a>
+                            <button onclick="getExpandedBenefits('Rainbow Light Men\'s One Multivitamin', 'Comprehensive nutrition, male health, metabolic energy, and foundational vitality.', 'expanded-multi', this)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold flex-1 text-sm py-2.5 rounded-xl transition">✨ Explore</button>
+                        </div>
+                    </div>
+
+                    <!-- Fish Oil -->
+                    <div class="custom-card p-6 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider bg-emerald-500/10 px-2 py-1 rounded">Morning</span>
+                            <h3 class="text-xl font-bold text-slate-100 mt-3 mb-2">NOW Foods Ultra Omega-3</h3>
+                            <p class="text-xs text-slate-400 mb-2 font-medium">Common Dose: 1-2 Softgels with fat</p>
+                            <p class="text-sm text-slate-300 leading-relaxed">High-density EPA/DHA softgels that combat systemic inflammation, support vascular elasticity, and help maintain optimal cardiac cell membrane dynamics.</p>
+                            <div id="expanded-omega" class="expanded-benefits hidden mt-4 p-3 bg-slate-900/60 rounded-xl text-slate-300 text-xs leading-relaxed border border-slate-700/40"></div>
+                        </div>
+                        <div class="mt-6 flex gap-3">
+                            <a href="https://amzn.to/4nZdvz3" target="_blank" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-center flex-1 text-sm py-2.5 rounded-xl transition">Amazon</a>
+                            <button onclick="getExpandedBenefits('NOW Foods Ultra Omega-3 Fish Oil', 'Inflammation mitigation, vascular elasticity, cardiovascular health, and neural protection.', 'expanded-omega', this)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold flex-1 text-sm py-2.5 rounded-xl transition">✨ Explore</button>
+                        </div>
+                    </div>
+
+                    <!-- Ginkgo Biloba -->
+                    <div class="custom-card p-6 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider bg-emerald-500/10 px-2 py-1 rounded">Morning</span>
+                            <h3 class="text-xl font-bold text-slate-100 mt-3 mb-2">Organic Ginkgo Biloba</h3>
+                            <p class="text-xs text-slate-400 mb-2 font-medium">Common Dose: 40-80 mg daily</p>
+                            <p class="text-sm text-slate-300 leading-relaxed">Upgrades microcirculation networks throughout peripheral and cerebral tissues, providing powerful secondary antioxidant defense mechanisms.</p>
+                            <div id="expanded-ginkgo" class="expanded-benefits hidden mt-4 p-3 bg-slate-900/60 rounded-xl text-slate-300 text-xs leading-relaxed border border-slate-700/40"></div>
+                        </div>
+                        <div class="mt-6 flex gap-3">
+                            <a href="https://amzn.to/3GAlH8n" target="_blank" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-center flex-1 text-sm py-2.5 rounded-xl transition">Amazon</a>
+                            <button onclick="getExpandedBenefits('Micro Ingredients Organic Ginkgo Biloba Powder', 'Cerebral and peripheral microcirculation support, memory, focus, and antioxidant capacity.', 'expanded-ginkgo', this)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold flex-1 text-sm py-2.5 rounded-xl transition">✨ Explore</button>
+                        </div>
+                    </div>
+
+                    <!-- Mega Mushrooms -->
+                    <div class="custom-card p-6 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider bg-emerald-500/10 px-2 py-1 rounded">Morning</span>
+                            <h3 class="text-xl font-bold text-slate-100 mt-3 mb-2">Organic Mega Mushrooms</h3>
+                            <p class="text-xs text-slate-400 mb-2 font-medium">Common Dose: 1-2 grams daily</p>
+                            <p class="text-sm text-slate-300 leading-relaxed">A specialized matrix including Lion's Mane and Cordyceps to bolster cellular energy, systemic immune defense, and gut microbiome health.</p>
+                            <div id="expanded-mushrooms" class="expanded-benefits hidden mt-4 p-3 bg-slate-900/60 rounded-xl text-slate-300 text-xs leading-relaxed border border-slate-700/40"></div>
+                        </div>
+                        <div class="mt-6 flex gap-3">
+                            <a href="https://amzn.to/4f4LgLs" target="_blank" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-center flex-1 text-sm py-2.5 rounded-xl transition">Amazon</a>
+                            <button onclick="getExpandedBenefits('Micro Ingredients Organic Mega Mushrooms Powder', 'Immune modulation, Cordyceps ATP cellular energy, Lion\'s Mane neurogenesis, and cognitive support.', 'expanded-mushrooms', this)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold flex-1 text-sm py-2.5 rounded-xl transition">✨ Explore</button>
+                        </div>
+                    </div>
+
+                    <!-- L-Theanine (Coffee Stacked) -->
+                    <div class="custom-card p-6 rounded-2xl border-2 border-emerald-500/40 bg-emerald-950/20 flex flex-col justify-between">
+                        <div>
+                            <span class="text-[10px] font-bold text-emerald-300 uppercase tracking-wider bg-emerald-500/20 px-2 py-1 rounded border border-emerald-500/30">Coffee Synergy Stack</span>
+                            <h3 class="text-xl font-bold text-slate-100 mt-3 mb-2">Nature's Trove L-Theanine</h3>
+                            <p class="text-xs text-emerald-400 mb-2 font-semibold">Timing Tip: Take directly with morning coffee</p>
+                            <p class="text-sm text-slate-300 leading-relaxed">Crosses the blood-brain barrier to trigger alpha wave generation, blunting caffeine-induced peripheral vasoconstriction and jitters without causing drowsiness.</p>
+                            <div id="expanded-theanine" class="expanded-benefits hidden mt-4 p-3 bg-slate-900/60 rounded-xl text-slate-300 text-xs leading-relaxed border border-slate-700/40"></div>
+                        </div>
+                        <div class="mt-6 flex gap-3">
+                            <a href="https://amzn.to/3ICaZPf" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-center flex-1 text-sm py-2.5 rounded-xl transition">Amazon</a>
+                            <button onclick="getExpandedBenefits('Nature\'s Trove L-Theanine', 'Synergizing with caffeine, eliminating coffee jitters, increasing alpha waves, and preventing anxiety-induced vasoconstriction.', 'expanded-theanine', this)" class="bg-slate-700 hover:bg-slate-600 text-white font-bold flex-1 text-sm py-2.5 rounded-xl transition">✨ Explore</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 2: Mid-Day & Pre-Workout Hydraulics -->
+            <div class="mb-12">
+                <div class="border-l-4 border-amber-500 pl-4 mb-6">
+                    <span class="text-xs font-extrabold text-amber-400 uppercase tracking-widest">Phase 2</span>
+                    <h2 class="text-2xl font-extrabold tracking-tight">🏋️‍♂️ Mid-Day & Pre-Workout (Hydraulic Optimization)</h2>
+                    <p class="text-sm text-slate-400 mt-1">Dedicated to active blood vessel dilation, cellular energy regeneration, and raw nitric oxide conversion.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- L-Citrulline -->
+                    <div class="custom-card p-6 rounded-2xl border-2 border-amber-500/40 bg-amber-950/20 flex flex-col justify-between">
+                        <div>
+                            <span class="text-[10px] font-bold text-amber-300 uppercase tracking-wider bg-amber-500/20 px-2 py-1 rounded border border-amber-500/30">Vascular Fuel</span>
+                            <h3 class="text-xl font-bold text-slate-100 mt-3 mb-2">Pure L-Citrulline</h3>
+                            <p class="text-xs text-amber-400 mb-2 font-semibold">Timing Tip: Take 60 mins before performance</p>
+                            <p class="text-sm text-slate-300 leading-relaxed">Bypasses initial liver breakdown to efficiently elevate serum L-arginine, acting as the ultimate raw fuel source for arterial dilation and peak hydraulic rigidity.</p>
+                            <div id="expanded-citrulline" class="expanded-benefits hidden mt-4 p-3 bg-slate-900/60 rounded-xl text-slate-300 text-xs leading-relaxed border border-slate-700/40"></div>
+                        </div>
+                        <div class="mt-6 flex gap-3">
+                            <a href="https://www.amazon.com/s?k=pure+l-citrulline+powder" target="_blank" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-center flex-1 text-sm py-2.5 rounded-xl transition">Amazon</a>
+                            <button onclick="getExpandedBenefits('Pure L-Citrulline Powder', 'Vascular dilation, systemic nitric oxide synthesis, hepatic bypass advantage, and erectile rigidity.', 'expanded-citrulline', this)" class="bg-slate-700 hover:bg-slate-600 text-white font-bold flex-1 text-sm py-2.5 rounded-xl transition">✨ Explore</button>
+                        </div>
+                    </div>
+
+                    <!-- Pycnogenol -->
+                    <div class="custom-card p-6 rounded-2xl border-2 border-amber-500/40 bg-amber-950/20 flex flex-col justify-between">
+                        <div>
+                            <span class="text-[10px] font-bold text-amber-300 uppercase tracking-wider bg-amber-500/20 px-2 py-1 rounded border border-amber-500/30">NO Catalyst</span>
+                            <h3 class="text-xl font-bold text-slate-100 mt-3 mb-2">Pycnogenol (Pine Bark)</h3>
+                            <p class="text-xs text-amber-400 mb-2 font-semibold">Daily Requirement: 100-120 mg daily</p>
+                            <p class="text-sm text-slate-300 leading-relaxed">Actively triggers the endothelial nitric oxide synthase (eNOS) pathway, behaving as the biological switch that processes precursors into active vasodilating gas.</p>
+                            <div id="expanded-pycnogenol" class="expanded-benefits hidden mt-4 p-3 bg-slate-900/60 rounded-xl text-slate-300 text-xs leading-relaxed border border-slate-700/40"></div>
+                        </div>
+                        <div class="mt-6 flex gap-3">
+                            <a href="https://www.amazon.com/s?k=pycnogenol+supplement" target="_blank" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-center flex-1 text-sm py-2.5 rounded-xl transition">Amazon</a>
+                            <button onclick="getExpandedBenefits('Pycnogenol French Maritime Pine Bark Extract', 'Activating eNOS, converting amino acids into nitric oxide, and synergistic pelvic vascular flow.', 'expanded-pycnogenol', this)" class="bg-slate-700 hover:bg-slate-600 text-white font-bold flex-1 text-sm py-2.5 rounded-xl transition">✨ Explore</button>
+                        </div>
+                    </div>
+
+                    <!-- Beet Root -->
+                    <div class="custom-card p-6 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider bg-emerald-500/10 px-2 py-1 rounded">Mid-Day</span>
+                            <h3 class="text-xl font-bold text-slate-100 mt-3 mb-2">Organic Beet Root</h3>
+                            <p class="text-xs text-slate-400 mb-2 font-medium">Common Dose: 1-2 teaspoons (take 2-3h before)</p>
+                            <p class="text-sm text-slate-300 leading-relaxed">Packed with inorganic dietary nitrates that utilize the salivary and gastric tract to generate secondary circulatory dilation networks.</p>
+                            <div id="expanded-beet" class="expanded-benefits hidden mt-4 p-3 bg-slate-900/60 rounded-xl text-slate-300 text-xs leading-relaxed border border-slate-700/40"></div>
+                        </div>
+                        <div class="mt-6 flex gap-3">
+                            <a href="https://amzn.to/3TQyiXR" target="_blank" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-center flex-1 text-sm py-2.5 rounded-xl transition">Amazon</a>
+                            <button onclick="getExpandedBenefits('Micro Ingredients Organic Beet Root Powder', 'Dietary inorganic nitrates, salivary pathway circulation, blood pressure support, and physical performance.', 'expanded-beet', this)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold flex-1 text-sm py-2.5 rounded-xl transition">✨ Explore</button>
+                        </div>
+                    </div>
+
+                    <!-- Creatine -->
+                    <div class="custom-card p-6 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider bg-emerald-500/10 px-2 py-1 rounded">Mid-Day</span>
+                            <h3 class="text-xl font-bold text-slate-100 mt-3 mb-2">Creatine Monohydrate</h3>
+                            <p class="text-xs text-slate-400 mb-2 font-medium">Common Dose: 3-5 grams daily</p>
+                            <p class="text-sm text-slate-300 leading-relaxed">Replenishes muscle tissue phosphocreatine reserves to support direct explosive ATP production, cellular hydration, and neuroprotective qualities.</p>
+                            <div id="expanded-creatine" class="expanded-benefits hidden mt-4 p-3 bg-slate-900/60 rounded-xl text-slate-300 text-xs leading-relaxed border border-slate-700/40"></div>
+                        </div>
+                        <div class="mt-6 flex gap-3">
+                            <a href="https://www.amazon.com/s?k=Nutricost+Creatine+Monohydrate" target="_blank" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-center flex-1 text-sm py-2.5 rounded-xl transition">Amazon</a>
+                            <button onclick="getExpandedBenefits('Nutricost Creatine Monohydrate', 'ATP cellular regeneration, cellular hydration, physical power, recovery speed, and cognitive preservation.', 'expanded-creatine', this)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold flex-1 text-sm py-2.5 rounded-xl transition">✨ Explore</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 3: Evening & Night Recovery -->
+            <div>
+                <div class="border-l-4 border-indigo-500 pl-4 mb-6">
+                    <span class="text-xs font-extrabold text-indigo-400 uppercase tracking-widest">Phase 3</span>
+                    <h2 class="text-2xl font-extrabold tracking-tight">🌙 Evening & Night (System Down-Regulation & Recovery)</h2>
+                    <p class="text-sm text-slate-400 mt-1">Blunts daytime cortisol spikes, relaxes vascular smooth muscle, and replenishes seminal and mineral building blocks.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Magnesium Glycinate -->
+                    <div class="custom-card p-6 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider bg-indigo-500/10 px-2 py-1 rounded">Night</span>
+                            <h3 class="text-xl font-bold text-slate-100 mt-3 mb-2">Magnesium Glycinate</h3>
+                            <p class="text-xs text-slate-400 mb-2 font-medium">Common Dose: 300-420 mg taken 30-60m before bed</p>
+                            <p class="text-sm text-slate-300 leading-relaxed">The high-absorption glycine conjugate coaxes the nervous system into a slow-wave state while relaxing the smooth muscle wrapping vascular networks.</p>
+                            <div id="expanded-magnesium" class="expanded-benefits hidden mt-4 p-3 bg-slate-900/60 rounded-xl text-slate-300 text-xs leading-relaxed border border-slate-700/40"></div>
+                        </div>
+                        <div class="mt-6 flex gap-3">
+                            <a href="https://amzn.to/46m6xxQ" target="_blank" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-center flex-1 text-sm py-2.5 rounded-xl transition">Amazon</a>
+                            <button onclick="getExpandedBenefits('Inate Vitality Magnesium Glycinate', 'Smooth muscle relaxation, nervous system down-regulation, cellular recovery, and sleep architecture optimization.', 'expanded-magnesium', this)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold flex-1 text-sm py-2.5 rounded-xl transition">✨ Explore</button>
+                        </div>
+                    </div>
+
+                    <!-- Ashwagandha -->
+                    <div class="custom-card p-6 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider bg-indigo-500/10 px-2 py-1 rounded">Night</span>
+                            <h3 class="text-xl font-bold text-slate-100 mt-3 mb-2">Organic Ashwagandha</h3>
+                            <p class="text-xs text-slate-400 mb-2 font-medium">Common Dose: 250-600 mg daily</p>
+                            <p class="text-sm text-slate-300 leading-relaxed">Suppresses circulating cortisol levels, actively shifting the body out of vasoconstricting 'fight-or-flight' patterns to support natural androgen synthesis.</p>
+                            <div id="expanded-ashwa" class="expanded-benefits hidden mt-4 p-3 bg-slate-900/60 rounded-xl text-slate-300 text-xs leading-relaxed border border-slate-700/40"></div>
+                        </div>
+                        <div class="mt-6 flex gap-3">
+                            <a href="https://amzn.to/4lDzn1o" target="_blank" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-center flex-1 text-sm py-2.5 rounded-xl transition">Amazon</a>
+                            <button onclick="getExpandedBenefits('Organic Veda Ashwagandha Root Powder', 'Cortisol suppression, stress mitigation, nervous system balance, and nocturnal recovery kinetics.', 'expanded-ashwa', this)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold flex-1 text-sm py-2.5 rounded-xl transition">✨ Explore</button>
+                        </div>
+                    </div>
+
+                    <!-- Pumpkin Seeds -->
+                    <div class="custom-card p-6 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider bg-indigo-500/10 px-2 py-1 rounded">Night Snack</span>
+                            <h3 class="text-xl font-bold text-slate-100 mt-3 mb-2">Organic Pumpkin Seeds</h3>
+                            <p class="text-xs text-slate-400 mb-2 font-medium">Common Dose: 1/4 cup (~30g) as evening snack</p>
+                            <p class="text-sm text-slate-300 leading-relaxed">Packed with raw organic **Zinc** and **Tryptophan**. Essential for prostate enzyme function and maintaining semen manufacturing volumes for ejaculation force.</p>
+                            <div id="expanded-seeds" class="expanded-benefits hidden mt-4 p-3 bg-slate-900/60 rounded-xl text-slate-300 text-xs leading-relaxed border border-slate-700/40"></div>
+                        </div>
+                        <div class="mt-6 flex gap-3">
+                            <a href="https://www.amazon.com/s?k=Trader+Joe%27s+Pumpkin+Seeds" target="_blank" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-center flex-1 text-sm py-2.5 rounded-xl transition">Amazon</a>
+                            <button onclick="getExpandedBenefits('Trader Joe\'s Pumpkin Seeds', 'Natural dietary zinc, prostate health, seminal fluid accumulation, and sleep neurotransmitter synthesis.', 'expanded-seeds', this)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold flex-1 text-sm py-2.5 rounded-xl transition">✨ Explore</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 2: ELECTROLYTE FACE-OFF ================= -->
+        <section id="content-electrolytes" class="tab-content hidden">
+            <div class="border-l-4 border-indigo-500 pl-4 mb-8">
+                <span class="text-xs font-extrabold text-indigo-400 uppercase tracking-widest font-mono">Head-to-Head Specification</span>
+                <h2 class="text-2xl font-extrabold tracking-tight">⚡ High-Sodium, Zero-Sugar Formulations: ATH LYTES vs. LMNT</h2>
+                <p class="text-sm text-slate-400 mt-1">Comparing the biological impact of the industry's premier zero-sugar hydration packets.</p>
+            </div>
+
+            <!-- Comparison Matrix -->
+            <div class="bg-slate-800 rounded-3xl border border-slate-700/60 overflow-hidden mb-12 shadow-2xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm border-collapse">
+                        <thead>
+                            <tr class="bg-slate-950/60 text-slate-400 border-b border-slate-700 font-bold uppercase tracking-wider text-[11px]">
+                                <th class="p-6">Electrolyte / Spec</th>
+                                <th class="p-6 text-slate-100 border-l border-slate-700/60">ATH LYTES</th>
+                                <th class="p-6 text-orange-400 border-l border-slate-700/60">LMNT</th>
+                                <th class="p-6 text-center border-l border-slate-700/60">Biomedical Advantage</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-700/50 text-slate-300">
+                            <tr>
+                                <td class="p-6 font-bold text-slate-200">Sodium</td>
+                                <td class="p-6 border-l border-slate-700/60">1,000 mg <span class="block text-xs text-slate-500">(from Pink Himalayan Salt)</span></td>
+                                <td class="p-6 border-l border-slate-700/60">1,000 mg <span class="block text-xs text-slate-500">(from Sodium Chloride)</span></td>
+                                <td class="p-6 text-center border-l border-slate-700/60"><span class="bg-slate-700/40 text-slate-400 text-xs px-2.5 py-1 rounded font-semibold uppercase tracking-wider">Exact Tie</span></td>
+                            </tr>
+                            <tr>
+                                <td class="p-6 font-bold text-slate-200">Potassium</td>
+                                <td class="p-6 border-l border-slate-700/60 text-emerald-400 font-semibold">310 mg <span class="block text-xs text-slate-500 font-normal">(from Potassium Chloride)</span></td>
+                                <td class="p-6 border-l border-slate-700/60">200 mg <span class="block text-xs text-slate-500">(from Potassium Chloride)</span></td>
+                                <td class="p-6 text-center border-l border-slate-700/60"><span class="bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-1 rounded font-bold uppercase tracking-wider">ATH (+55% Yield)</span></td>
+                            </tr>
+                            <tr>
+                                <td class="p-6 font-bold text-slate-200">Magnesium</td>
+                                <td class="p-6 border-l border-slate-700/60 text-emerald-400 font-semibold">
+                                    105 mg <span class="block text-xs text-slate-400 font-medium">Magnesium Glycinate</span>
+                                </td>
+                                <td class="p-6 border-l border-slate-700/60">
+                                    60 mg <span class="block text-xs text-orange-400/80 font-medium">Magnesium Malate</span>
+                                </td>
+                                <td class="p-6 text-center border-l border-slate-700/60">
+                                    <span class="bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-1 rounded font-bold uppercase tracking-wider block mb-1">ATH (+75% Yield)</span>
+                                    <span class="text-[10px] text-slate-500 block">Glycinate supports relaxation</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-6 font-bold text-slate-200">Sweetening Agent</td>
+                                <td class="p-6 border-l border-slate-700/60 font-medium text-slate-200">100% Organic Monk Fruit</td>
+                                <td class="p-6 border-l border-slate-700/60">Stevia Leaf Extract <span class="block text-[11px] text-slate-500">(Unflavored variant contains none)</span></td>
+                                <td class="p-6 text-center border-l border-slate-700/60"><span class="bg-slate-700/40 text-slate-300 text-xs px-2.5 py-1 rounded font-semibold uppercase tracking-wider">Taste Preference</span></td>
+                            </tr>
+                            <tr>
+                                <td class="p-6 font-bold text-slate-200">Stevia & Erythritol</td>
+                                <td class="p-6 border-l border-slate-700/60 text-emerald-400 font-semibold">Absolute Zero</td>
+                                <td class="p-6 border-l border-slate-700/60">Contains Stevia</td>
+                                <td class="p-6 text-center border-l border-slate-700/60"><span class="bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-1 rounded font-bold uppercase tracking-wider">ATH (Cleaner Blend)</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Focus Comparison Detail Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div class="custom-card p-8 rounded-3xl border-l-4 border-l-slate-300">
+                    <h3 class="text-xl font-extrabold mb-4 flex items-center gap-2">
+                        <span class="bg-slate-700/40 p-1.5 rounded text-white">🏆</span>
+                        ATH LYTES: The Recovery Core
+                    </h3>
+                    <ul class="space-y-3.5 text-sm text-slate-300">
+                        <li class="flex items-start gap-2.5">
+                            <span class="text-emerald-400 shrink-0 mt-1">✔</span>
+                            <span><strong>Higher Background Mineral Density:</strong> Contains significantly higher potassium and magnesium counts to prevent motor unit cramping.</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <span class="text-emerald-400 shrink-0 mt-1">✔</span>
+                            <span><strong>Magnesium Glycinate Advantage:</strong> Uses magnesium bound to glycine, promoting smooth vascular relaxation, sleep restoration, and physical tissue repair.</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <span class="text-emerald-400 shrink-0 mt-1">✔</span>
+                            <span><strong>Monk Fruit Exclusivity:</strong> Avoids stevia leaf altogether, reducing gut-level sensitivity or lingering botanical aftertastes.</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="custom-card p-8 rounded-3xl border-l-4 border-l-orange-500">
+                    <h3 class="text-xl font-extrabold mb-4 text-orange-400 flex items-center gap-2">
+                        <span class="bg-orange-500/10 p-1.5 rounded text-orange-400">⚡</span>
+                        LMNT: The Daytime Energy Core
+                    </h3>
+                    <ul class="space-y-3.5 text-sm text-slate-300">
+                        <li class="flex items-start gap-2.5">
+                            <span class="text-orange-400 shrink-0 mt-1">✔</span>
+                            <span><strong>Magnesium Malate Build:</strong> Bound to malic acid, directly serving as a Krebs cycle intermediate to support daytime aerobic ATP generation.</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <span class="text-orange-400 shrink-0 mt-1">✔</span>
+                            <span><strong>Elite Flavor Selections:</strong> Famous for an extensive, creative roster including spicy chili lines and rich chocolate variations.</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <span class="text-orange-400 shrink-0 mt-1">✔</span>
+                            <span><strong>Unflavored Raw Variant:</strong> Offers a perfectly unflavored blend containing zero artificial components, ideal for strict fasting windows.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 3: NITRIC OXIDE SCIENCE ================= -->
+        <section id="content-science" class="tab-content hidden">
+            <div class="border-l-4 border-blue-500 pl-4 mb-8">
+                <span class="text-xs font-extrabold text-blue-400 uppercase tracking-widest font-mono">Biochemical Pathway</span>
+                <h2 class="text-2xl font-extrabold tracking-tight">🧬 The Nitric Oxide Vasodilation Pathway</h2>
+                <p class="text-sm text-slate-400 mt-1">Understanding the vascular mechanics of pelvic blood flow and hydraulic tension.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Pathway Explanation -->
+                <div class="lg:col-span-2 custom-card p-8 rounded-3xl">
+                    <h3 class="text-xl font-bold mb-4 text-blue-300">How Vasodilation Works</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-4">
+                        To achieve maximal vascular rigidity and output strength, your body relies on the relaxation of the smooth muscle tissue lining arterial walls. When these smooth muscles relax, the artery diametric area expands, permitting a massive rush of localized blood volume.
+                    </p>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                        This sequence is triggered by a gaseous signaling molecule known as **Nitric Oxide (NO)**. Below is the physiological pathway that translates your amino acids into expansion:
+                    </p>
+
+                    <!-- Step-by-Step Flow -->
+                    <div class="space-y-4 font-mono text-xs">
+                        <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800 flex items-start gap-3">
+                            <span class="bg-blue-500/20 text-blue-400 px-2 py-1 rounded">Step 1</span>
+                            <div>
+                                <p class="font-bold text-slate-200">L-Citrulline Conversion</p>
+                                <p class="text-slate-400 mt-1">L-Citrulline convert cleanly into L-Arginine via your kidneys, bypassing hepatic digestion completely.</p>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800 flex items-start gap-3">
+                            <span class="bg-blue-500/20 text-blue-400 px-2 py-1 rounded">Step 2</span>
+                            <div>
+                                <p class="font-bold text-slate-200">eNOS Enzyme Activation (The Pycnogenol Trigger)</p>
+                                <p class="text-slate-400 mt-1">The endothelial Nitric Oxide Synthase (eNOS) enzyme uses L-Arginine to produce active Nitric Oxide (NO) gas.</p>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800 flex items-start gap-3">
+                            <span class="bg-blue-500/20 text-blue-400 px-2 py-1 rounded">Step 3</span>
+                            <div>
+                                <p class="font-bold text-slate-200">cGMP Synthesis & Vasodilation</p>
+                                <p class="text-slate-400 mt-1">NO triggers guanylyl cyclase, converting GTP to cGMP. cGMP induces smooth muscle relaxation, generating instant pelvic arterial rigidity.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategic Summary -->
+                <div class="custom-card p-8 rounded-3xl bg-gradient-to-br from-slate-800 to-indigo-950/30">
+                    <h3 class="text-lg font-bold mb-4 text-indigo-300">Vascular Optimization Protocol</h3>
+                    <div class="space-y-4 text-sm text-slate-300">
+                        <div>
+                            <span class="text-xs text-indigo-400 font-bold block uppercase">Precursor Combo</span>
+                            <p class="font-semibold text-white">L-Citrulline + Pycnogenol</p>
+                            <p class="text-xs text-slate-400 mt-0.5">Provides the absolute raw building block combined with the converting enzyme trigger. Standard clinical doses take 2-4 weeks to reach saturation.</p>
+                        </div>
+                        <div class="border-t border-slate-700/60 pt-4">
+                            <span class="text-xs text-indigo-400 font-bold block uppercase">Nocturnal Cortisol Suppression</span>
+                            <p class="font-semibold text-white">Magnesium Glycinate + Ashwagandha</p>
+                            <p class="text-xs text-slate-400 mt-0.5">Mitigates high adrenaline and physical tension, ensuring vascular channels remain open and unconstricted during sleep and rest states.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 bg-slate-950/60 py-6 mt-12 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>© 2026 Greg's Performance Hub. All rights reserved. Optimized for high-output vascular recovery.</p>
+        </div>
+    </footer>
+
+    <!-- Interactive Navigation Control Script -->
+    <script>
+        function switchTab(tabName) {
+            // Hide all contents
+            document.querySelectorAll('.tab-content').forEach(element => {
+                element.classList.add('hidden');
+            });
+            // Reset nav button states
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-slate-800', 'text-white', 'shadow-md');
+                btn.classList.add('text-slate-400', 'hover:text-slate-200');
+            });
+
+            // Show active content
+            document.getElementById(`content-${tabName}`).classList.remove('hidden');
+            // Style active nav button
+            const activeBtn = document.getElementById(`tab-${tabName}`);
+            activeBtn.classList.remove('text-slate-400', 'hover:text-slate-200');
+            activeBtn.classList.add('bg-slate-800', 'text-white', 'shadow-md');
+        }
+
+        async function getExpandedBenefits(productName, primaryBenefits, targetElementId, buttonElement) {
+            const targetElement = document.getElementById(targetElementId);
+            const originalButtonText = buttonElement.innerHTML;
+
+            // Show loading animation
+            buttonElement.innerHTML = '<span class="loading-spinner"></span> Loading...';
+            buttonElement.disabled = true;
+
+            const prompt = `Expand on the health benefits of ${productName}, which primarily assists with: ${primaryBenefits}. Provide a highly scientific, crisp, informative paragraph focusing on biological pathways, absorption rates, or synergistic advantages for this wellness stack.`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }]
+            };
+
+            const apiKey = ""; // Canvas injected automatically at runtime
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            const fetchWithRetry = async (attempt = 0) => {
+                const backoffDelays = [1000, 2000, 4000, 8000, 16000];
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) {
+                        const errDetails = await response.json();
+                        throw new Error(errDetails.error?.message || `Status ${response.status}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    if (attempt < 5) {
+                        await new Promise(resolve => setTimeout(resolve, backoffDelays[attempt]));
+                        return fetchWithRetry(attempt + 1);
+                    }
+                    throw error;
+                }
+            };
+
+            try {
+                const result = await fetchWithRetry();
+                const textOutput = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (textOutput) {
+                    targetElement.innerHTML = textOutput;
+                    targetElement.classList.remove('hidden');
+                } else {
+                    targetElement.innerHTML = '<p class="text-rose-400 text-xs mt-2 font-mono">Failed to extract detailed benefits. Try clicking again.</p>';
+                    targetElement.classList.remove('hidden');
+                }
+            } catch (error) {
+                targetElement.innerHTML = `<p class="text-rose-400 text-xs mt-2 font-mono">Network Error: ${error.message}. Please verify the connection.</p>`;
+                targetElement.classList.remove('hidden');
+            } finally {
+                // Restore button state
+                buttonElement.innerHTML = originalButtonText;
+                buttonElement.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
