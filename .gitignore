@@ -1,0 +1,4 @@
+# Local agent tooling (HyperFrames skills installed via npx skills add)
+.agents/
+.claude/
+skills-lock.json
