@@ -696,15 +696,15 @@
         };
 
         const WK_EXERCISES = [
-            { id: 'chest', name: 'Chest Presses', yt: 'kettlebell+chest+press',
+            { id: 'chest', name: 'Chest Presses', vid: 'dMg2AzoEt_w', vidBy: 'Radical Strength',
               desc: '<b class="text-white">Grip the bell by the horns at your chest</b>, elbows tucked. Press straight out until your arms lock, then pull it back under control. Keep your core braced.' },
-            { id: 'rot', name: 'Rotations', yt: 'kettlebell+torso+rotation+exercise',
+            { id: 'rot', name: 'Rotations', vid: 'h675HGQlYjw', vidBy: 'Fitway',
               desc: '<b class="text-white">Hold the bell at chest height</b> with both hands. Rotate your torso side to side, pivoting on the trailing foot. Power from the hips and obliques, not the arms.' },
-            { id: 'swing', name: 'Side Swings', yt: 'kettlebell+side+swing',
+            { id: 'swing', name: 'Side Swings', vid: 'JWT1pQjBqmY', vidBy: 'Gym Zapper',
               desc: '<b class="text-white">Swing the bell across your body</b> from outside one hip up to the opposite shoulder. Hinge at the hips to load each rep. Split it 25 per side.' },
-            { id: 'halo', name: 'Halos (Circles)', yt: 'kettlebell+halo+exercise',
+            { id: 'halo', name: 'Halos (Circles)', vid: 'Sci3lijQBmk', vidBy: 'Brittany van Schravendijk',
               desc: '<b class="text-white">Hold the bell upside-down by the horns</b> and circle it around your head, keeping it close and your neck tall. Alternate direction every few reps.' },
-            { id: 'shoulder', name: 'Shoulder Presses', yt: 'kettlebell+shoulder+press',
+            { id: 'shoulder', name: 'Shoulder Presses', vid: 'gjr-QAdsq4o', vidBy: 'Onnit',
               desc: '<b class="text-white">Rack the bell at your shoulder</b>, wrist straight. Press straight up until your bicep is by your ear. Split the 50 — 25 each arm.' }
         ];
 
@@ -774,16 +774,45 @@
             document.getElementById('wk-finish').classList.toggle('hidden', total !== WK_TOTAL_GOAL);
 
             const host = document.getElementById('wk-exercises');
-            host.innerHTML = '';
+            if (!host.childElementCount) wkBuildCards(host);
+
             WK_EXERCISES.forEach(ex => {
                 const reps = wkState.reps[ex.id] || 0;
                 const done = reps >= WK_GOAL;
+                const card = document.getElementById('wk-card-' + ex.id);
+                card.classList.toggle('!border-cyan-500/70', done);
+                card.querySelector('.wk-count').textContent = reps;
+                card.querySelector('.wk-check').classList.toggle('hidden', !done);
+                const fill = card.querySelector('.wk-fill');
+                fill.style.width = (reps / WK_GOAL * 100) + '%';
+                fill.classList.toggle('bg-cyan-400', done);
+                fill.classList.toggle('bg-pink-500', !done);
+                card.querySelectorAll('.wk-btn[data-n]').forEach(btn => {
+                    const n = parseInt(btn.dataset.n, 10);
+                    btn.disabled = n > 0 ? done : reps === 0;
+                });
+                card.querySelector('.wk-undo').classList.toggle('invisible', reps === 0);
+            });
+        }
+
+        function wkBuildCards(host) {
+            WK_EXERCISES.forEach(ex => {
                 const card = document.createElement('div');
-                card.className = 'custom-card rounded-2xl p-4 flex flex-col' + (done ? ' !border-cyan-500/70' : '');
+                card.id = 'wk-card-' + ex.id;
+                card.className = 'custom-card rounded-2xl p-4 flex flex-col';
                 card.innerHTML = `
                     <div class="flex justify-between items-baseline gap-2">
-                        <h3 class="font-extrabold uppercase text-sm tracking-wide">${ex.name}${done ? ' <span class="text-cyan-400">✓</span>' : ''}</h3>
-                        <p class="text-xl font-extrabold tabular-nums">${reps}<span class="text-xs text-slate-500 font-bold">/${WK_GOAL}</span></p>
+                        <h3 class="font-extrabold uppercase text-sm tracking-wide">${ex.name} <span class="wk-check hidden text-cyan-400">✓</span></h3>
+                        <p class="text-xl font-extrabold tabular-nums"><span class="wk-count">0</span><span class="text-xs text-slate-500 font-bold">/${WK_GOAL}</span></p>
+                    </div>
+                    <div class="mt-3 relative aspect-video rounded-xl overflow-hidden border border-slate-700/60 bg-black" id="wk-vid-${ex.id}">
+                        <button class="wk-play group absolute inset-0 w-full h-full cursor-pointer" data-vid="${ex.vid}" data-host="wk-vid-${ex.id}" aria-label="Play ${ex.name} demo video">
+                            <img src="https://i.ytimg.com/vi/${ex.vid}/hqdefault.jpg" alt="${ex.name} demo video thumbnail" loading="lazy" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition">
+                            <span class="absolute inset-0 flex items-center justify-center">
+                                <span class="bg-slate-950/80 border border-slate-600 group-hover:border-cyan-400 group-hover:text-cyan-300 rounded-full px-4 py-2 text-xs font-extrabold tracking-wide transition">▶ PLAY DEMO</span>
+                            </span>
+                            <span class="absolute bottom-1.5 right-2 text-[9px] font-semibold text-slate-300/80 bg-slate-950/70 rounded px-1.5 py-0.5">video: ${ex.vidBy}</span>
+                        </button>
                     </div>
                     <div class="flex gap-3 mt-3 items-start">
                         <div class="shrink-0 w-24 rounded-xl border border-slate-700/60 bg-slate-950 p-1 relative">
@@ -792,24 +821,31 @@
                         </div>
                         <div class="text-xs text-slate-400 leading-relaxed">
                             ${ex.desc}
-                            <a class="block mt-1.5 text-cyan-400 hover:text-cyan-300 font-bold" href="https://www.youtube.com/results?search_query=${ex.yt}" target="_blank" rel="noopener">▶ Watch a real demo ↗</a>
+                            <a class="block mt-1.5 text-cyan-400 hover:text-cyan-300 font-bold" href="https://www.youtube.com/watch?v=${ex.vid}" target="_blank" rel="noopener">▶ Open on YouTube ↗</a>
                         </div>
                     </div>
                     <div class="h-1.5 rounded-full bg-slate-950 overflow-hidden my-3">
-                        <div class="h-full rounded-full transition-all duration-300 ${done ? 'bg-cyan-400' : 'bg-pink-500'}" style="width:${reps / WK_GOAL * 100}%"></div>
+                        <div class="wk-fill h-full rounded-full transition-all duration-300 bg-pink-500" style="width:0%"></div>
                     </div>
                     <div class="mt-auto flex gap-2">
-                        <button data-id="${ex.id}" data-n="5" ${done ? 'disabled' : ''} class="wk-btn flex-1 py-2 rounded-lg text-sm font-bold bg-slate-950 border border-slate-700 hover:border-slate-500 disabled:opacity-30 disabled:hover:border-slate-700 transition">+5</button>
-                        <button data-id="${ex.id}" data-n="10" ${done ? 'disabled' : ''} class="wk-btn flex-1 py-2 rounded-lg text-sm font-bold bg-slate-950 border border-slate-700 hover:border-slate-500 disabled:opacity-30 disabled:hover:border-slate-700 transition">+10</button>
-                        <button data-id="${ex.id}" data-n="${WK_GOAL}" ${done ? 'disabled' : ''} class="wk-btn flex-1 py-2 rounded-lg text-sm font-bold bg-cyan-500 text-slate-950 hover:bg-cyan-400 disabled:opacity-30 disabled:hover:bg-cyan-500 transition">Done</button>
+                        <button data-id="${ex.id}" data-n="5" class="wk-btn flex-1 py-2 rounded-lg text-sm font-bold bg-slate-950 border border-slate-700 hover:border-slate-500 disabled:opacity-30 disabled:hover:border-slate-700 transition">+5</button>
+                        <button data-id="${ex.id}" data-n="10" class="wk-btn flex-1 py-2 rounded-lg text-sm font-bold bg-slate-950 border border-slate-700 hover:border-slate-500 disabled:opacity-30 disabled:hover:border-slate-700 transition">+10</button>
+                        <button data-id="${ex.id}" data-n="${WK_GOAL}" class="wk-btn flex-1 py-2 rounded-lg text-sm font-bold bg-cyan-500 text-slate-950 hover:bg-cyan-400 disabled:opacity-30 disabled:hover:bg-cyan-500 transition">Done</button>
                     </div>
-                    ${reps > 0 ? `<button data-id="${ex.id}" data-n="-5" class="wk-btn mt-2 text-[11px] font-semibold text-slate-500 hover:text-slate-300 transition">− undo 5</button>` : ''}
+                    <button data-id="${ex.id}" data-n="-5" class="wk-btn wk-undo invisible mt-2 text-[11px] font-semibold text-slate-500 hover:text-slate-300 transition">− undo 5</button>
                 `;
                 host.appendChild(card);
             });
 
             host.querySelectorAll('.wk-btn').forEach(btn => {
                 btn.addEventListener('click', () => wkAdd(btn.dataset.id, parseInt(btn.dataset.n, 10)));
+            });
+
+            host.querySelectorAll('.wk-play').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const frame = document.getElementById(btn.dataset.host);
+                    frame.innerHTML = `<iframe class="absolute inset-0 w-full h-full" src="https://www.youtube-nocookie.com/embed/${btn.dataset.vid}?autoplay=1&rel=0" title="Exercise demo video" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+                });
             });
         }
 
