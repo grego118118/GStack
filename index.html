@@ -86,6 +86,9 @@
                 <button onclick="switchTab('science')" id="tab-science" class="tab-btn flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-semibold text-slate-400 hover:text-slate-200">
                     🧬 NO Science
                 </button>
+                <button onclick="switchTab('workout')" id="tab-workout" class="tab-btn flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-semibold text-slate-400 hover:text-slate-200">
+                    🏋️ 250 Reps
+                </button>
             </nav>
         </div>
     </header>
@@ -490,6 +493,64 @@
                 </div>
             </div>
         </section>
+
+        <!-- ================= TAB 4: 250-REP KETTLEBELL CHALLENGE ================= -->
+        <section id="content-workout" class="tab-content hidden">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-1.5 h-8 bg-cyan-500 rounded-full"></div>
+                <h2 class="text-2xl font-extrabold tracking-tight">🏋️ Daily Challenge — 250 Reps, One Bell</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Hero / scoreboard -->
+                <div class="custom-card rounded-2xl p-6 lg:col-span-1 flex flex-col self-start">
+                    <div>
+                        <p class="text-[10px] font-bold uppercase tracking-[0.22em] text-slate-400">Daily Challenge</p>
+                        <h3 class="mt-2 text-3xl font-extrabold leading-tight tracking-tight">
+                            <span class="text-cyan-400">250</span> Reps.<br>One Bell.<br><span class="text-pink-500">No Excuses.</span>
+                        </h3>
+                        <p class="mt-3 text-xs text-slate-400 leading-relaxed">50 reps of each movement. Any order. Finish what you start.</p>
+                        <div class="mt-4 inline-flex items-center gap-2 bg-slate-950 border border-slate-700/70 rounded-full px-3.5 py-1.5 text-xs font-semibold">
+                            🔥 Streak: <b id="wk-streak" class="text-amber-300">0</b> days
+                        </div>
+                    </div>
+
+                    <div class="mt-6 rounded-xl border border-slate-700/60 bg-slate-950/70 p-5 text-center">
+                        <p class="text-[10px] font-bold uppercase tracking-[0.22em] text-slate-400">Total Reps</p>
+                        <p class="mt-1 text-5xl font-extrabold tabular-nums leading-none">
+                            <span id="wk-total">0</span><span class="text-lg text-slate-500 font-bold">/250</span>
+                        </p>
+                        <div class="mt-4 h-3 rounded-full bg-slate-900 border border-slate-800 overflow-hidden">
+                            <div id="wk-total-fill" class="h-full w-0 rounded-full bg-gradient-to-r from-cyan-400 to-pink-500 transition-all duration-300"></div>
+                        </div>
+                        <button onclick="wkResetToday()" class="mt-4 text-[11px] font-semibold text-slate-500 hover:text-slate-300 transition">↺ Reset today</button>
+                    </div>
+
+                    <div id="wk-finish" class="hidden mt-4 rounded-xl border border-cyan-500/60 bg-gradient-to-br from-cyan-500/15 to-pink-500/15 p-5 text-center">
+                        <p class="text-2xl font-extrabold tracking-tight">250 / 250 💪</p>
+                        <p class="mt-1 text-xs text-slate-300">Done. Same time tomorrow.</p>
+                    </div>
+                </div>
+
+                <!-- Exercise cards -->
+                <div id="wk-exercises" class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+            </div>
+
+            <div class="custom-card rounded-2xl p-5 flex gap-4 items-start">
+                <div class="bg-cyan-500/15 p-2 rounded-lg text-cyan-300 shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="font-bold text-cyan-300 text-sm mb-1">Form First</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        The inline diagrams show the movement path only — they are not a substitute for coaching. Watch a real demo before loading a bell you have not used before, keep the weight conservative on rotational and overhead work, and stop the set if your low back or shoulder takes over the movement. Progress and rep counts are stored locally in this browser.
+                    </p>
+                    <p class="text-xs text-slate-400 mt-2">Workout credit: <a class="text-cyan-400 hover:text-cyan-300" href="https://www.instagram.com/brelandalmadova" target="_blank" rel="noopener">@brelandalmadova</a></p>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- Footer -->
@@ -578,6 +639,181 @@
                 buttonElement.disabled = false;
             }
         }
+    </script>
+
+    <!-- 250-Rep Kettlebell Challenge Tracker -->
+    <script>
+        /* Animated bell that rides a motion path (SMIL) — shows the movement arc, not a person. */
+        function wkBell(path, dur, loop) {
+            const motion = loop
+                ? `<animateMotion dur="${dur}" repeatCount="indefinite" path="${path}"/>`
+                : `<animateMotion dur="${dur}" repeatCount="indefinite" path="${path}" keyPoints="0;1;0" keyTimes="0;0.5;1" calcMode="linear"/>`;
+            return '<g>'
+                + '<path d="M-6,-9 A8,8 0 0 1 6,-9" fill="none" stroke="#ec4899" stroke-width="3" stroke-linecap="round"/>'
+                + '<circle cx="0" cy="0" r="8" fill="#ec4899"/>'
+                + motion + '</g>';
+        }
+
+        const WK_STK = 'fill="none" stroke="#22d3ee" stroke-width="3.5" stroke-linecap="round"';
+        const WK_TRL = 'fill="none" stroke="#fde047" stroke-width="2" stroke-linecap="round" stroke-dasharray="1 7" opacity="0.7"';
+
+        const WK_SVGS = {
+            chest:
+                '<svg viewBox="0 0 120 130" role="img" aria-label="Chest press movement path">'
+                + `<circle cx="34" cy="40" r="9" ${WK_STK}/>`
+                + `<path d="M34,49 V88 M34,88 L24,114 M34,88 L46,114 M34,60 H56" ${WK_STK}/>`
+                + `<path d="M60,60 H100" ${WK_TRL}/>`
+                + wkBell('M62,60 L100,60', '1.6s', false)
+                + '</svg>',
+            rot:
+                '<svg viewBox="0 0 120 130" role="img" aria-label="Torso rotation movement path">'
+                + `<circle cx="60" cy="36" r="9" ${WK_STK}/>`
+                + `<path d="M60,45 V86 M60,86 L46,114 M60,86 L74,114 M60,58 L44,66 M60,58 L76,66" ${WK_STK}/>`
+                + `<path d="M24,70 A40,16 0 0 1 96,70" ${WK_TRL}/>`
+                + wkBell('M24,70 A40,16 0 0 1 96,70', '2s', false)
+                + '</svg>',
+            swing:
+                '<svg viewBox="0 0 120 130" role="img" aria-label="Side swing movement path">'
+                + `<circle cx="50" cy="34" r="9" ${WK_STK}/>`
+                + `<path d="M50,43 V84 M50,84 L36,114 M50,84 L64,114 M50,54 L70,62" ${WK_STK}/>`
+                + `<path d="M26,104 A58,58 0 0 1 102,48" ${WK_TRL}/>`
+                + wkBell('M26,104 A58,58 0 0 1 102,48', '1.8s', false)
+                + '</svg>',
+            halo:
+                '<svg viewBox="0 0 120 130" role="img" aria-label="Halo movement path">'
+                + `<circle cx="60" cy="52" r="9" ${WK_STK}/>`
+                + `<path d="M60,61 V94 M60,94 L48,120 M60,94 L72,120 M60,68 L44,44 M60,68 L76,44" ${WK_STK}/>`
+                + `<ellipse cx="60" cy="38" rx="30" ry="13" ${WK_TRL}/>`
+                + wkBell('M30,38 a30,13 0 1 0 60,0 a30,13 0 1 0 -60,0', '2.4s', true)
+                + '</svg>',
+            shoulder:
+                '<svg viewBox="0 0 120 130" role="img" aria-label="Shoulder press movement path">'
+                + `<circle cx="60" cy="54" r="9" ${WK_STK}/>`
+                + `<path d="M60,63 V96 M60,96 L48,122 M60,96 L72,122 M60,68 L44,80 M60,68 L78,52" ${WK_STK}/>`
+                + `<path d="M80,46 V14" ${WK_TRL}/>`
+                + wkBell('M80,46 L80,14', '1.5s', false)
+                + '</svg>'
+        };
+
+        const WK_EXERCISES = [
+            { id: 'chest', name: 'Chest Presses', yt: 'kettlebell+chest+press',
+              desc: '<b class="text-white">Grip the bell by the horns at your chest</b>, elbows tucked. Press straight out until your arms lock, then pull it back under control. Keep your core braced.' },
+            { id: 'rot', name: 'Rotations', yt: 'kettlebell+torso+rotation+exercise',
+              desc: '<b class="text-white">Hold the bell at chest height</b> with both hands. Rotate your torso side to side, pivoting on the trailing foot. Power from the hips and obliques, not the arms.' },
+            { id: 'swing', name: 'Side Swings', yt: 'kettlebell+side+swing',
+              desc: '<b class="text-white">Swing the bell across your body</b> from outside one hip up to the opposite shoulder. Hinge at the hips to load each rep. Split it 25 per side.' },
+            { id: 'halo', name: 'Halos (Circles)', yt: 'kettlebell+halo+exercise',
+              desc: '<b class="text-white">Hold the bell upside-down by the horns</b> and circle it around your head, keeping it close and your neck tall. Alternate direction every few reps.' },
+            { id: 'shoulder', name: 'Shoulder Presses', yt: 'kettlebell+shoulder+press',
+              desc: '<b class="text-white">Rack the bell at your shoulder</b>, wrist straight. Press straight up until your bicep is by your ear. Split the 50 — 25 each arm.' }
+        ];
+
+        const WK_GOAL = 50;
+        const WK_TOTAL_GOAL = WK_GOAL * WK_EXERCISES.length;
+
+        function wkToday() {
+            const d = new Date();
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+        function wkDayKey() { return 'gstack:workout:' + wkToday(); }
+
+        let wkState = { reps: {}, streak: 0, lastDone: null };
+        WK_EXERCISES.forEach(ex => { wkState.reps[ex.id] = 0; });
+
+        function wkTotal() {
+            return WK_EXERCISES.reduce((sum, ex) => sum + (wkState.reps[ex.id] || 0), 0);
+        }
+
+        function wkLoad() {
+            try {
+                const meta = JSON.parse(localStorage.getItem('gstack:workout:meta') || 'null');
+                if (meta) { wkState.streak = meta.streak || 0; wkState.lastDone = meta.lastDone || null; }
+            } catch (e) { /* corrupt or unavailable storage — start fresh */ }
+            try {
+                const day = JSON.parse(localStorage.getItem(wkDayKey()) || 'null');
+                if (day) WK_EXERCISES.forEach(ex => { wkState.reps[ex.id] = day[ex.id] || 0; });
+            } catch (e) { /* same */ }
+
+            // A gap of more than one day since the last finish breaks the streak.
+            if (wkState.lastDone) {
+                const diff = Math.round((new Date(wkToday()) - new Date(wkState.lastDone)) / 86400000);
+                if (diff > 1) { wkState.streak = 0; wkSave(); }
+            }
+            wkRender();
+        }
+
+        function wkSave() {
+            try {
+                localStorage.setItem(wkDayKey(), JSON.stringify(wkState.reps));
+                localStorage.setItem('gstack:workout:meta', JSON.stringify({ streak: wkState.streak, lastDone: wkState.lastDone }));
+            } catch (e) { /* storage full or blocked — counts stay in memory for this session */ }
+        }
+
+        function wkAdd(id, n) {
+            const before = wkTotal();
+            wkState.reps[id] = Math.max(0, Math.min(WK_GOAL, (wkState.reps[id] || 0) + n));
+            if (before < WK_TOTAL_GOAL && wkTotal() === WK_TOTAL_GOAL && wkState.lastDone !== wkToday()) {
+                wkState.streak += 1;
+                wkState.lastDone = wkToday();
+            }
+            wkSave();
+            wkRender();
+        }
+
+        function wkResetToday() {
+            WK_EXERCISES.forEach(ex => { wkState.reps[ex.id] = 0; });
+            wkSave();
+            wkRender();
+        }
+
+        function wkRender() {
+            const total = wkTotal();
+            document.getElementById('wk-total').textContent = total;
+            document.getElementById('wk-total-fill').style.width = (total / WK_TOTAL_GOAL * 100) + '%';
+            document.getElementById('wk-streak').textContent = wkState.streak;
+            document.getElementById('wk-finish').classList.toggle('hidden', total !== WK_TOTAL_GOAL);
+
+            const host = document.getElementById('wk-exercises');
+            host.innerHTML = '';
+            WK_EXERCISES.forEach(ex => {
+                const reps = wkState.reps[ex.id] || 0;
+                const done = reps >= WK_GOAL;
+                const card = document.createElement('div');
+                card.className = 'custom-card rounded-2xl p-4 flex flex-col' + (done ? ' !border-cyan-500/70' : '');
+                card.innerHTML = `
+                    <div class="flex justify-between items-baseline gap-2">
+                        <h3 class="font-extrabold uppercase text-sm tracking-wide">${ex.name}${done ? ' <span class="text-cyan-400">✓</span>' : ''}</h3>
+                        <p class="text-xl font-extrabold tabular-nums">${reps}<span class="text-xs text-slate-500 font-bold">/${WK_GOAL}</span></p>
+                    </div>
+                    <div class="flex gap-3 mt-3 items-start">
+                        <div class="shrink-0 w-24 rounded-xl border border-slate-700/60 bg-slate-950 p-1 relative">
+                            <span class="absolute top-1.5 left-2 text-[8px] font-bold uppercase tracking-[0.14em] text-slate-500">▶ path</span>
+                            ${WK_SVGS[ex.id]}
+                        </div>
+                        <div class="text-xs text-slate-400 leading-relaxed">
+                            ${ex.desc}
+                            <a class="block mt-1.5 text-cyan-400 hover:text-cyan-300 font-bold" href="https://www.youtube.com/results?search_query=${ex.yt}" target="_blank" rel="noopener">▶ Watch a real demo ↗</a>
+                        </div>
+                    </div>
+                    <div class="h-1.5 rounded-full bg-slate-950 overflow-hidden my-3">
+                        <div class="h-full rounded-full transition-all duration-300 ${done ? 'bg-cyan-400' : 'bg-pink-500'}" style="width:${reps / WK_GOAL * 100}%"></div>
+                    </div>
+                    <div class="mt-auto flex gap-2">
+                        <button data-id="${ex.id}" data-n="5" ${done ? 'disabled' : ''} class="wk-btn flex-1 py-2 rounded-lg text-sm font-bold bg-slate-950 border border-slate-700 hover:border-slate-500 disabled:opacity-30 disabled:hover:border-slate-700 transition">+5</button>
+                        <button data-id="${ex.id}" data-n="10" ${done ? 'disabled' : ''} class="wk-btn flex-1 py-2 rounded-lg text-sm font-bold bg-slate-950 border border-slate-700 hover:border-slate-500 disabled:opacity-30 disabled:hover:border-slate-700 transition">+10</button>
+                        <button data-id="${ex.id}" data-n="${WK_GOAL}" ${done ? 'disabled' : ''} class="wk-btn flex-1 py-2 rounded-lg text-sm font-bold bg-cyan-500 text-slate-950 hover:bg-cyan-400 disabled:opacity-30 disabled:hover:bg-cyan-500 transition">Done</button>
+                    </div>
+                    ${reps > 0 ? `<button data-id="${ex.id}" data-n="-5" class="wk-btn mt-2 text-[11px] font-semibold text-slate-500 hover:text-slate-300 transition">− undo 5</button>` : ''}
+                `;
+                host.appendChild(card);
+            });
+
+            host.querySelectorAll('.wk-btn').forEach(btn => {
+                btn.addEventListener('click', () => wkAdd(btn.dataset.id, parseInt(btn.dataset.n, 10)));
+            });
+        }
+
+        wkLoad();
     </script>
 </body>
 </html>
