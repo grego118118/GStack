@@ -643,58 +643,6 @@
 
     <!-- 250-Rep Kettlebell Challenge Tracker -->
     <script>
-        /* Animated bell that rides a motion path (SMIL) — shows the movement arc, not a person. */
-        function wkBell(path, dur, loop) {
-            const motion = loop
-                ? `<animateMotion dur="${dur}" repeatCount="indefinite" path="${path}"/>`
-                : `<animateMotion dur="${dur}" repeatCount="indefinite" path="${path}" keyPoints="0;1;0" keyTimes="0;0.5;1" calcMode="linear"/>`;
-            return '<g>'
-                + '<path d="M-6,-9 A8,8 0 0 1 6,-9" fill="none" stroke="#ec4899" stroke-width="3" stroke-linecap="round"/>'
-                + '<circle cx="0" cy="0" r="8" fill="#ec4899"/>'
-                + motion + '</g>';
-        }
-
-        const WK_STK = 'fill="none" stroke="#22d3ee" stroke-width="3.5" stroke-linecap="round"';
-        const WK_TRL = 'fill="none" stroke="#fde047" stroke-width="2" stroke-linecap="round" stroke-dasharray="1 7" opacity="0.7"';
-
-        const WK_SVGS = {
-            chest:
-                '<svg viewBox="0 0 120 130" role="img" aria-label="Chest press movement path">'
-                + `<circle cx="34" cy="40" r="9" ${WK_STK}/>`
-                + `<path d="M34,49 V88 M34,88 L24,114 M34,88 L46,114 M34,60 H56" ${WK_STK}/>`
-                + `<path d="M60,60 H100" ${WK_TRL}/>`
-                + wkBell('M62,60 L100,60', '1.6s', false)
-                + '</svg>',
-            rot:
-                '<svg viewBox="0 0 120 130" role="img" aria-label="Torso rotation movement path">'
-                + `<circle cx="60" cy="36" r="9" ${WK_STK}/>`
-                + `<path d="M60,45 V86 M60,86 L46,114 M60,86 L74,114 M60,58 L44,66 M60,58 L76,66" ${WK_STK}/>`
-                + `<path d="M24,70 A40,16 0 0 1 96,70" ${WK_TRL}/>`
-                + wkBell('M24,70 A40,16 0 0 1 96,70', '2s', false)
-                + '</svg>',
-            swing:
-                '<svg viewBox="0 0 120 130" role="img" aria-label="Side swing movement path">'
-                + `<circle cx="50" cy="34" r="9" ${WK_STK}/>`
-                + `<path d="M50,43 V84 M50,84 L36,114 M50,84 L64,114 M50,54 L70,62" ${WK_STK}/>`
-                + `<path d="M26,104 A58,58 0 0 1 102,48" ${WK_TRL}/>`
-                + wkBell('M26,104 A58,58 0 0 1 102,48', '1.8s', false)
-                + '</svg>',
-            halo:
-                '<svg viewBox="0 0 120 130" role="img" aria-label="Halo movement path">'
-                + `<circle cx="60" cy="52" r="9" ${WK_STK}/>`
-                + `<path d="M60,61 V94 M60,94 L48,120 M60,94 L72,120 M60,68 L44,44 M60,68 L76,44" ${WK_STK}/>`
-                + `<ellipse cx="60" cy="38" rx="30" ry="13" ${WK_TRL}/>`
-                + wkBell('M30,38 a30,13 0 1 0 60,0 a30,13 0 1 0 -60,0', '2.4s', true)
-                + '</svg>',
-            shoulder:
-                '<svg viewBox="0 0 120 130" role="img" aria-label="Shoulder press movement path">'
-                + `<circle cx="60" cy="54" r="9" ${WK_STK}/>`
-                + `<path d="M60,63 V96 M60,96 L48,122 M60,96 L72,122 M60,68 L44,80 M60,68 L78,52" ${WK_STK}/>`
-                + `<path d="M80,46 V14" ${WK_TRL}/>`
-                + wkBell('M80,46 L80,14', '1.5s', false)
-                + '</svg>'
-        };
-
         const WK_EXERCISES = [
             { id: 'chest', name: 'Chest Presses', vid: 'dMg2AzoEt_w', vidBy: 'Radical Strength',
               desc: '<b class="text-white">Grip the bell by the horns at your chest</b>, elbows tucked. Press straight out until your arms lock, then pull it back under control. Keep your core braced.' },
@@ -815,9 +763,9 @@
                         </button>
                     </div>
                     <div class="flex gap-3 mt-3 items-start">
-                        <div class="shrink-0 w-24 rounded-xl border border-slate-700/60 bg-slate-950 p-1 relative">
-                            <span class="absolute top-1.5 left-2 text-[8px] font-bold uppercase tracking-[0.14em] text-slate-500">▶ path</span>
-                            ${WK_SVGS[ex.id]}
+                        <div class="shrink-0 w-28 rounded-xl border border-slate-700/60 bg-slate-950 overflow-hidden relative">
+                            <span class="absolute top-1.5 left-2 z-10 text-[8px] font-bold uppercase tracking-[0.14em] text-slate-400 bg-slate-950/70 rounded px-1">demo</span>
+                            <video autoplay muted loop playsinline aria-label="Animated ${ex.name} movement demo" class="block w-full h-auto"><source src="assets/demos/${ex.id}.mp4" type="video/mp4"><source src="assets/demos/${ex.id}.webm" type="video/webm"></video>
                         </div>
                         <div class="text-xs text-slate-400 leading-relaxed">
                             ${ex.desc}
